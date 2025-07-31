@@ -1,79 +1,76 @@
-window.addEventListener("DOMContentLoaded", function () {
-  const display = document.querySelector(".input");
+window.addEventListener("load", function () {
+  const display = document.getElementById("display");
+  const historyDisplay = document.getElementById("history");
   const buttons = document.querySelectorAll(".button");
-  // 입력값
+
   let currentInput = "0";
-  // 이전 결과값
   let previousInput = "";
-  // 지금 수행할 연산
   let operator = null;
-  // Input 초기화 여부
   let resetInput = false;
+  let calculationHistory = "";
   function updateDisplay() {
-    display.value = currentInput;
+    display.textContent = currentInput;
+    display.scrollLeft = display.scrollWidth;
   }
+
+  function updateHistory() {
+    historyDisplay.textContent = calculationHistory;
+  }
+
   function handleNumber(number) {
     if (currentInput === "0" || resetInput) {
       currentInput = number;
       resetInput = false;
-      return;
+    } else {
+      currentInput += number;
     }
-    currentInput += number;
     updateDisplay();
   }
-  // 소수점 처리
+
   function handleDecimal() {
-    console.log("decimal");
     if (resetInput) {
       currentInput = "0.";
       resetInput = false;
-    }
-    if (!currentInput.includes(".")) {
+    } else if (!currentInput.includes(".")) {
       currentInput += ".";
     }
     updateDisplay();
   }
+
   function handleClear() {
     currentInput = "0";
     previousInput = "";
     operator = null;
     resetInput = false;
+    calculationHistory = "";
+    updateDisplay();
+    updateHistory();
   }
+
   function handleOperator(op) {
-    // 연산기호를 누르면 현재 input값으로 계산함
-    debugger;
     if (operator !== null && !resetInput) {
       calculate();
     }
-    // 첫 번째 연산자 입력 시 previousInput에 현재 값 저장
+
     if (operator === null || resetInput) {
       previousInput = currentInput;
     }
+
     operator = op;
+    calculationHistory = `${previousInput} ${operator}`;
     resetInput = true;
     updateDisplay();
+    updateHistory();
   }
-  function isNumberKey(e) {
-    const exp = e.key;
-    const regex = /^[0-9+\-*/.]+$/;
-    return regex.test(exp);
-  }
+
   function calculate() {
-    if (
-      operator === null ||
-      previousInput === "" ||
-      currentInput === "" ||
-      resetInput
-    ) {
-      handleClear();
-      // Clear 처리를 위해 ...
-      setTimeout(() => {
-        throw new Error("수식이 올바르지 않습니다");
-      }, 100);
-    }
-    let result;
-    const firstOperand = parseFloat(previousInput);
+    if (operator === null || previousInput === "") return;
+
     const secondOperand = parseFloat(currentInput);
+    if (isNaN(secondOperand)) return;
+
+    const firstOperand = parseFloat(previousInput);
+    let result;
 
     switch (operator) {
       case "＋":
@@ -94,33 +91,34 @@ window.addEventListener("DOMContentLoaded", function () {
       default:
         return;
     }
-    result.toFixed(2);
-    console.log(`${firstOperand} ${operator} ${secondOperand} = ${result}`);
+
     currentInput = result.toString();
+    calculationHistory = `${previousInput} ${operator} ${secondOperand} =`;
     previousInput = currentInput;
-    resetInput = true;
     operator = null;
+    resetInput = true;
     updateDisplay();
+    updateHistory();
   }
-  //버튼 이벤트
+
+  // 버튼 이벤트
   buttons.forEach((button) => {
     button.addEventListener("click", function () {
-      const buttonType = this.classList.contains("number") ? "number" : "";
-      const buttonText = this.querySelector(".button-text").textContent;
+      const buttonText = this.textContent;
+
       switch (buttonText) {
-        case "C": //clear
+        case "C":
           handleClear();
           break;
-        case "±": // 부호반전
-          console.log("inversion");
+        case "±":
           currentInput = (parseFloat(currentInput) * -1).toString();
+          updateDisplay();
           break;
         case ".":
           handleDecimal();
           break;
         case "＝":
           calculate();
-          resetInput = true;
           break;
         case "()":
         case "＋":
@@ -131,52 +129,44 @@ window.addEventListener("DOMContentLoaded", function () {
           handleOperator(buttonText);
           break;
         default:
-          if (buttonType === "number") {
-            handleNumber(buttonText);
-          }
+          if (!isNaN(buttonText)) handleNumber(buttonText);
           break;
       }
-      updateDisplay();
     });
   });
 
-  //키보드 이벤트
-  this.addEventListener("keyup", function (e) {
-    console.log(isNumberKey(e));
-    if (!isNumberKey(e)) {
-      handleClear();
-      updateDisplay();
-    }
-    // 계산기에서 끝까지 Backspace 누를 경우 0추가
+  // 키보드 이벤트
+  this.document.addEventListener("keyup", function (e) {
+    e.preventDefault();
+    console.log(e.key);
     if (e.key === "Backspace") {
-      console.log(currentInput);
       if (currentInput.length <= 1) {
         currentInput = "0";
       } else {
         currentInput = currentInput.slice(0, -1);
       }
-    }
-    if (e.key === "0" && currentInput.length < 1) {
+      updateDisplay();
       return;
     }
+
     if (e.key >= "0" && e.key <= "9") {
-      // 현재 숫자가 0이거나 초기화 상태일 경우 핸들링
-      if (currentInput === "0" || resetInput) {
+      if (resetInput) {
         currentInput = e.key;
         resetInput = false;
-        console.log(currentInput);
-        updateDisplay();
-        return;
+      } else if (currentInput === "0") {
+        currentInput = e.key;
+      } else {
+        currentInput += e.key;
       }
-      console.log(display.value);
-      currentInput += e.key;
-      console.log(currentInput);
-      // 소수점일경우
+      updateDisplay();
+      return;
     }
+
     if (e.key === ".") {
       handleDecimal();
+      return;
     }
-    // 연산자일 경우
+
     if (["+", "-", "*", "/", "%"].includes(e.key)) {
       let op;
       switch (e.key) {
@@ -197,20 +187,12 @@ window.addEventListener("DOMContentLoaded", function () {
           break;
       }
       handleOperator(op);
+      return;
     }
-    //엔터키 처리
-    if (e.key === "Enter") {
-      // 계산
+
+    if (e.key === "Enter" || e.key === "=") {
       calculate();
-      resetInput = true;
+      return;
     }
   });
-  // 커서처리
-  display.addEventListener("click", function () {
-    display.focus();
-    const tmp = this.value;
-    this.value = "";
-    this.value = tmp;
-  });
-  updateDisplay();
 });
