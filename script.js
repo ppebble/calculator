@@ -138,7 +138,6 @@ window.addEventListener("load", function () {
   // 키보드 이벤트
   this.document.addEventListener("keyup", function (e) {
     e.preventDefault();
-    console.log(e.key);
     if (e.key === "Backspace") {
       if (currentInput.length <= 1) {
         currentInput = "0";
