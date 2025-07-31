@@ -1,0 +1,177 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
+
+.container {
+  display: flex;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+.container .main-container {
+  height: 90%;
+  width: 40%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  border: 3px solid #53c95dee;
+}
+.container .dot-button-container {
+  height: 3vh;
+  width: 30vw;
+  margin-bottom: 5px;
+  flex-direction: row;
+}
+.container .display-container {
+  height: 10vh;
+  width: 30vw;
+  border: 3px solid #c95b53ee;
+  margin-bottom: 15px;
+  overflow: hidden;
+  font-size: 50px;
+  /* color: #c95b53ee; */
+}
+.container .button-container {
+  border: 3px solid #5378c9ee;
+  font-size: 50px;
+  /* color: #5378c9ee; */
+  width: 30vw;
+  height: 72vh;
+  justify-content: space-between;
+  flex-direction: column;
+  user-select: none;
+  /* flex-direction: row; */
+  flex: 1;
+}
+.dot-button {
+  margin: 10px;
+  height: 20px;
+  width: 20px;
+  border-radius: 100%;
+}
+.dot-button#red-btn {
+  background-color: rgb(255, 66, 66);
+}
+.dot-button#yellow-btn {
+  background-color: rgb(255, 187, 0);
+}
+.dot-button#green-btn {
+  background-color: rgb(13, 185, 13);
+}
+.button-row {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  align-items: center;
+  min-width: 0;
+}
+.button {
+  gap: 8px;
+  margin: 0px 8px 0px 8px;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  border: 1px solid #53514c;
+  border-radius: 5px;
+  height: 80px;
+  cursor: pointer;
+  min-width: 0;
+}
+.button.symbol {
+  background-color: #ff9721;
+  color: aliceblue;
+}
+.button.symbol#equal {
+  background-color: #5fd155;
+}
+.button-text {
+  text-align: center;
+}
+.button:active {
+  background-color: #6d6965;
+}
+.button.number:active {
+  color: aliceblue;
+}
+.button.symbol:active {
+  background-color: #995910;
+  color: aliceblue;
+}
+.button.symbol#equal:active {
+  background-color: #0f6608;
+}
+.input {
+  border: 0px;
+  font-size: 50px;
+  width: 29vw;
+  padding: 0px 5px 0px 5px;
+  text-align: right;
+}
+.input:focus {
+  outline: none;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 850px) {
+  .container .main-container {
+    width: 90%;
+  }
+
+  .container .display-container,
+  .container .button-container,
+  .container .dot-button-container {
+    width: 80vw;
+  }
+
+  .display-container,
+  .input {
+    font-size: 30px;
+    height: 8vh;
+  }
+  .input-row {
+    justify-content: end;
+  }
+  .button {
+    height: 60px;
+    margin: 0px 4px;
+  }
+
+  .button-text {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 400px) {
+  .button-text {
+    font-size: 16px;
+  }
+
+  .button {
+    height: 50px;
+  }
+}
+
+@media (max-width: 320px) {
+  .button-text {
+    font-size: 14px;
+  }
+
+  .button {
+    height: 40px;
+    margin: 0px 2px;
+  }
+
+  .display-container,
+  .input {
+    font-size: 24px;
+    height: 6vh;
+  }
+}
